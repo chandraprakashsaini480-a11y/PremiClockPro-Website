@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alarm — PremiClock Pro</title>
+<style>
+/* --- STYLES (Cleaned up and Verified) --- */
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+  color: #fff; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+.page-center{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 20px;
+}
+.instruction-guide {
+    max-width: 850px;
+    width: 90%;
+    margin: 40px auto 30px auto; 
+    padding: 30px;
+    background: rgba(255,255,255,0.1); 
+    backdrop-filter: blur(6px);
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    text-align: left;
+}
+.instruction-guide h3 {
+    color: #FFEB3B; 
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+.instruction-guide ul {
+    list-style: none;
+    padding-left: 0;
+    line-height: 1.6;
+}
+.instruction-guide ul li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 20px;
+}
+.instruction-guide ul li::before {
+    content: "➡️"; 
+    position: absolute;
+    left: 0;
+}
+.instruction-guide.faq-section ul li::before {
+    content: "💡"; 
+    position: absolute;
+    left: 0;
+}
+.site-footer{
+  margin: 40px auto 10px;
+  display:flex;
+  gap:18px;
+  padding:10px 22px;
+  border-radius:18px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  z-index: 100; 
+}
+.site-footer a{
+  color:#fff;
+  text-decoration:none;
+  font-size: 13px; 
+}
+.site-footer a:hover{
+  text-decoration:underline;
+}
+.copyright{
+  width:100%;
+  text-align:center;
+  font-size:11px; 
+  opacity:.65;
+  margin-bottom:25px;
+}
+.container {
+  background: rgba(255,255,255,0.15);
+  padding: 30px;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+}
+h1 { 
+  font-size: 1.8rem; 
+  margin-bottom: 8px; 
+  font-weight: 700;
+}
+label {
+  display: block;
+  text-align: left;
+  margin: 15px 0 5px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+.time-picker-group {
+  display: flex;
+  gap: 10px;
+}
+.time-picker-group select, 
+.time-picker-group input {
+  padding: 12px;
+  background: #fff; 
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  color: #333;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-align: center;
+}
+.time-picker-group .hour-minute-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0;
+}
+.time-picker-group input[type="number"] {
+  flex: 1;
+  text-align: right;
+  border: none;
+  background: transparent;
+  padding: 12px 5px;
+  margin: 0;
+}
+.separator {
+  padding: 0 2px;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.ampm-select {
+  flex: 0 0 80px; 
+  text-align-last: center; 
+}
+select {
+  background: #fff;
+  color: #333;
+}
+button {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+button:nth-of-type(1) {
+  background: #FF4081; 
+  color: white;
+}
+button:nth-of-type(1):hover { background: #E73370; }
+button:nth-of-type(2) {
+  background: #4A00E0; 
+  color: white;
+}
+button:nth-of-type(2):hover {
+  background: #3A00B0;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 15px 0 10px;
+  cursor: pointer;
+  font-size: 15px;
+  opacity: 0.9;
+}
+#status {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+}
+#liveClock{
+  position: fixed;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 30px;
+  font-size: 32px;
+  font-weight: 600;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 9999;
+  letter-spacing: 1px;
+}
+#liveClock span{
+  font-size: 16px;
+  font-weight: 400;
+  margin-left: 5px;
+}
+/* Time Panel Styles (Left Side) */
+.time-panel{
+  position: fixed; 
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 220px;
+  color: #fff;
+  padding: 15px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.time-panel h3{
+  margin: 10px 0 6px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+.time-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.time-btn{
+  width: 46px;
+  padding: 8px 0;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s;
+}
+.time-btn:hover{
+  background: #ff4081;
+}
+/* Recent Alarms Styles (Right Side) */
+.recent-alarms{
+  position: fixed;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 230px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+  color: white;
+}
+.recent-alarms h3{
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+}
+#recentList{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#recentList li{
+  background: rgba(255,255,255,0.15);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer; /* Added for better UX */
+}
+.top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  z-index: 9999;
+}
+.logo{
+  font-size:26px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing: 1.5px;
+  border-bottom: 3px solid #ff4081; 
+  padding-bottom: 2px;
+}
+.nav{
+  background:rgba(255,255,255,.18);
+  padding:6px;
+  border-radius:14px;
+}
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.nav a:hover,
+.nav a.active {
+  background:rgba(255,255,255,.25);
+}
+@media(max-width:768px){
+  .top-header{
+    padding: 10px 15px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .nav {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+  }
+  .time-panel, .recent-alarms {
+    display: none;
+  }
+}
+
+</style>
+</head>
+<body>
+  
+<header class="top-header">
+  <div class="logo">PremiClock Pro</div>
+
+  <nav class="nav">
+    <a href="alarm.html" class="active">Alarm</a>
+    <a href="timer.html">Timer</a>
+    <a href="stopwatch.html">Stopwatch</a>
+    <a href="calendar.html">Calendar</a> 
+    <a href="time.html">Time</a>
+  </nav>
+</header>
+
+<div id="liveClock"></div>
+
+<div class="time-panel">
+  <h3>Quick Set AM</h3>
+  <div class="time-row" id="amTimes"></div>
+
+  <h3>Quick Set PM</h3>
+  <div class="time-row" id="pmTimes"></div>
+</div>
+
+<div class="recent-alarms">
+  <h3>⏱ Recently Set Alarms</h3>
+  <ul id="recentList"></ul>
+</div>
+
+<div class="page-center">
+  <div class="container">
+    <h1>Set Alarm ⏰</h1>
+    
+    <label for="alarmHour">Select Alarm Time:</label>
+    <div class="time-picker-group">
+      <div class="hour-minute-input">
+        <input type="number" id="alarmHour" min="1" max="12" value="10" onchange="validateTime()">
+        <span class="separator">:</span>
+        <input type="number" id="alarmMinute" min="0" max="59" value="00" onchange="validateTime()">
+      </div>
+      <select id="ampmSelect" class="ampm-select">
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+      </select>
+    </div>
+
+    <label for="soundSelect">Choose Sound:</label>
+    <select id="soundSelect">
+        <option value="classic">Classic Tone</option>
+        <option value="childhood">Childhood Bell</option>
+        <option value="bird">Morning Birds</option>
+    </select>
+
+    <label class="checkbox-label">
+        <input type="checkbox" id="loopSound">
+        Loop Sound (Rings until stopped)
+    </label>
+
+    <button onclick="setAlarm()">Set Alarm</button>
+    <button onclick="stopAlarm()">Stop Alarm</button>
+
+    <div id="status">No alarm set</div>
+
+    <audio id="classic" src="https://vclock.com/sound/classic.mp3"></audio>
+    <audio id="childhood" src="https://vclock.com/sound/childhood.mp3"></audio>
+    <audio id="bird" src="https://vclock.com/sound/bird.mp3"></audio>
+  </div>
+</div>
+
+<div class="instruction-guide">
+    <h3>How to Use the Online Alarm Clock</h3>
+    <p>Using PremiClock Pro to set an alarm is quick and easy, ensuring you never miss an important event. Follow these simple steps for reliable online timekeeping:</p>
+    <ul>
+        <li>**Select the Time:** Use the hour and minute input fields in the central card to specify the desired time. You can manually type the numbers or use the small arrow buttons.</li>
+        <li>**Choose AM/PM:** Ensure the AM or PM selector is correctly set for morning or evening alarms.</li>
+        <li>**Use Quick Set Panel:** Click any of the pre-set hour buttons on the left (under AM or PM) to quickly set the alarm hour to the top of that hour (e.g., '5 PM' sets the time to 05:00 PM) and instantly activate the alarm.</li>
+        <li>**Pick a Sound:** Use the "Choose Sound" dropdown menu to select your preferred audio alert, such as 'Classic Tone' or 'Morning Birds'.</li>
+        <li>**Loop Option:** Check the "Loop Sound" box if you want the alarm to continue ringing until you manually click "Stop Alarm."</li>
+        <li>**Activate:** Click the **Set Alarm** button. The status message below will confirm the exact time your alarm is set for and will be added to the "Recently Set" list.</li>
+        <li>**Important:** For the alarm to work, the browser tab must remain open and your device must be awake.</li>
+    </ul>
+</div>
+
+<div class="instruction-guide faq-section" style="margin-top: 20px;">
+    <h3>❓ Frequently Asked Questions (FAQs)</h3>
+    <ul>
+        <li>**Will the alarm ring if I close the browser or the tab?**<br>
+        No. For the online alarm clock to remain active and ring at the set time, the browser tab must remain open and your device must be awake (not in sleep or standby mode).</li>
+        <li>**What happens if the set alarm time has already passed today?**<br>
+        If you set an alarm for a time that has already passed in the current day, the system automatically sets the alarm for the same time on the next day to ensure you receive the intended alert.</li>
+        <li>**Can I change the alarm sound?**<br>
+        Yes, you can select your preferred audio alert—such as 'Classic Tone', 'Childhood Bell', or 'Morning Birds'—using the "Choose Sound" dropdown menu.</li>
+        <li>**How does the 'Recently Set Alarms' list work?**<br>
+        This list tracks the 5 most recent alarm times you've set. Clicking on any time in the list will instantly populate it into the main input fields, making it easier to set recurring alarms quickly.</li>
+    </ul>
+</div>
+<footer class="site-footer">
+  <a href="about.html">About</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms</a>
+  <a href="contact.html">Contact</a>
+</footer>
+
+<div class="copyright">
+  © 2025 PremiClock Pro • Premium Online Alarm
+</div>
+
+<script>
+let alarmTimeout;
+const alarmHourInput = document.getElementById("alarmHour");
+const alarmMinuteInput = document.getElementById("alarmMinute");
+const ampmSelect = document.getElementById("ampmSelect");
+const recentList = document.getElementById("recentList");
+
+// --- UTILITY FUNCTIONS ---
+
+function validateTime() {
+    let hour = parseInt(alarmHourInput.value);
+    let minute = parseInt(alarmMinuteInput.value);
+
+    if (isNaN(hour) || hour < 1) hour = 1;
+    if (hour > 12) hour = 12;
+
+    if (isNaN(minute) || minute < 0) minute = 0;
+    if (minute > 59) minute = 59;
+    
+    alarmHourInput.value = hour;
+    alarmMinuteInput.value = String(minute).padStart(2, '0');
+}
+
+function updateClock(){
+  const now = new Date();
+  let h = now.getHours();
+  let m = now.getMinutes();
+  let s = now.getSeconds();
+  let ap = h >= 12 ? "PM" : "AM";
+
+  h = h % 12 || 12; 
+  m = String(m).padStart(2, '0');
+  s = String(s).padStart(2, '0');
+
+  document.getElementById("liveClock").innerHTML =
+    `${h}:${m}:${s} <span>${ap}</span>`;
+}
+setInterval(updateClock,1000);
+updateClock();
+
+function playSound(sound, loop) {
+    const audio = document.getElementById(sound);
+    audio.loop = loop;
+    audio.play();
+    document.getElementById("status").innerText = "🔔 Alarm ringing!";
+}
+
+function stopAlarm(){
+  const sounds = ["classic","childhood","bird"];
+  sounds.forEach(id=>{
+    const a = document.getElementById(id);
+    a.pause();
+    a.currentTime = 0;
+  });
+
+  clearTimeout(alarmTimeout); 
+  document.getElementById("status").innerText = "Alarm stopped ⏹️";
+}
+
+function addRecentAlarm(time){
+  const li = document.createElement("li");
+  li.innerText = time;
+
+  // UX Improvement: Click recent time to set it in the main inputs
+  li.onclick = () => { 
+    const [timePart, ampmPart] = time.split(' ');
+    const [h, m] = timePart.split(':');
+    alarmHourInput.value = h;
+    alarmMinuteInput.value = m;
+    ampmSelect.value = ampmPart;
+    document.getElementById("status").innerText = `Time set to ${time}. Click 'Set Alarm' to activate.`;
+  };
+
+  // Remove duplicates before adding the new one
+  Array.from(recentList.children).forEach(child => {
+    if (child.innerText === time) {
+        recentList.removeChild(child);
+    }
+  });
+
+  recentList.prepend(li);
+
+  if(recentList.children.length > 5){
+    recentList.removeChild(recentList.lastChild);
+  }
+}
+
+// --- MAIN ALARM LOGIC ---
+
+function setAlarm() {
+    validateTime(); 
+
+    const hour12 = parseInt(alarmHourInput.value);
+    const minute = parseInt(alarmMinuteInput.value);
+    const ampm = ampmSelect.value;
+    const soundChoice = document.getElementById("soundSelect").value;
+    const shouldLoop = document.getElementById("loopSound").checked;
+
+    let hour24 = hour12;
+    if (ampm === "PM" && hour12 !== 12) {
+        hour24 = hour12 + 12;
+    } else if (ampm === "AM" && hour12 === 12) {
+        hour24 = 0; 
+    }
+
+    const now = new Date();
+    const alarm = new Date();
+    alarm.setHours(hour24, minute, 0, 0);
+
+    if (alarm <= now) {
+        // If the alarm time is already passed today, set it for tomorrow
+        alarm.setDate(alarm.getDate() + 1);
+    }
+
+    const diff = alarm - now;
+    clearTimeout(alarmTimeout);
+
+    alarmTimeout = setTimeout(() => {
+        playSound(soundChoice, shouldLoop);
+    }, diff);
+
+    const setTimeStr = alarm.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+    document.getElementById("status").innerText = 
+        `Alarm set for ${setTimeStr} 🎧`;
+    addRecentAlarm(setTimeStr);
+}
+
+// --- LEFT TIME PICKER BUTTONS LOGIC ---
+
+function createTimes(containerId, isPM){
+    const box = document.getElementById(containerId);
+
+    for(let i=1;i<=12;i++){
+        const btn = document.createElement("div");
+        btn.className = "time-btn";
+        btn.innerText = i;
+
+        btn.onclick = () => {
+            alarmHourInput.value = i;
+            alarmMinuteInput.value = "00"; 
+            ampmSelect.value = isPM ? "PM" : "AM";
+            // Automatically set the alarm when quick-set button is clicked
+            setAlarm(); 
+        };
+
+        box.appendChild(btn);
+    }
+}
+
+createTimes("amTimes", false);
+createTimes("pmTimes", true);
+
+// Initial default time on load
+window.onload = function() {
+    // Set current time + 1 hour, rounded to the nearest hour
+    const now = new Date();
+    let initialHour = (now.getHours() % 12) + 1;
+    let initialAmpm = (now.getHours() + 1) >= 12 && (now.getHours() + 1) < 24 ? "PM" : "AM";
+
+    if(initialHour === 13) initialHour = 1; // Handle 12 -> 1 wrap
+    if(initialHour === 0) initialHour = 12; // Handle 24h to 12h conversion error
+
+    alarmHourInput.value = initialHour;
+    alarmMinuteInput.value = "00";
+    ampmSelect.value = initialAmpm;
+};
+</script>
+</body>
+</html>

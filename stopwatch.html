@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch — PremiClock Pro</title>
+<style>
+/* --- BASE & LAYOUT STYLES (Consistent with other pages) --- */
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+  color: #fff; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* center content */
+.page-center{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 20px;
+}
+
+/* --- TOP/HEADER & NAV (Consistent) --- */
+.top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  z-index: 9999;
+}
+.logo{
+  font-size:26px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing: 1.5px;
+  border-bottom: 3px solid #ff4081; 
+  padding-bottom: 2px;
+}
+.nav{
+  background:rgba(255,255,255,.18);
+  padding:6px;
+  border-radius:14px;
+  backdrop-filter: blur(10px);
+}
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.nav a:hover,
+.nav a.active {
+  background:rgba(255,255,255,.25);
+}
+
+/* --- FOOTER & COPYRIGHT (Consistent) --- */
+.site-footer{
+  margin: 40px auto 10px;
+  display:flex;
+  gap:18px;
+  padding:10px 22px;
+  border-radius:18px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  z-index: 100; 
+}
+.site-footer a{
+  color:#fff;
+  text-decoration:none;
+  font-size: 13px; 
+}
+.site-footer a:hover{
+  text-decoration:underline;
+}
+.copyright{
+  width:100%;
+  text-align:center;
+  font-size:11px; 
+  opacity:.65;
+  margin-bottom:25px;
+}
+
+/* --- MAIN STOPWATCH CARD STYLES --- */
+.container {
+  background: rgba(255,255,255,0.15);
+  padding: 30px;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  text-align: center;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+h1 { 
+  font-size: 1.8rem; 
+  margin-bottom: 8px; 
+  font-weight: 700;
+}
+
+/* Main Display */
+#stopwatchDisplay {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin: 20px 0;
+  color: #FFEB3B; /* Yellow accent for time */
+}
+#stopwatchDisplay span {
+    font-size: 2rem;
+    color: #FF4081; /* Pink accent for milliseconds */
+}
+
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.btn-start {
+  background: #FF4081; /* Pink for Start/Lap */
+  color: white;
+}
+.btn-start:hover { background: #E73370; }
+
+.btn-lap {
+  background: #03A9F4; /* Blue for Lap */
+  color: white;
+  margin-top: 0;
+}
+.btn-lap:hover { background: #008AC5; }
+
+.btn-reset {
+  background: #4A00E0; /* Darker purple for Reset */
+  color: white;
+}
+.btn-reset:hover { background: #3A00B0; }
+
+
+/* --- RIGHT SIDE: LAP HISTORY (Recently Used) --- */
+.lap-history{
+  position: fixed;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 250px;
+  height: 50vh; /* Make it taller to fit more laps */
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+  color: white;
+}
+.lap-history h3{
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #03A9F4;
+}
+#lapListContainer{
+    max-height: calc(50vh - 50px); /* Adjust based on padding */
+    overflow-y: auto;
+    padding-right: 5px;
+}
+/* Scrollbar styling for a better look */
+#lapListContainer::-webkit-scrollbar {
+    width: 6px;
+}
+#lapListContainer::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 3px;
+}
+
+#lapList{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#lapList li{
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+#lapList li span:first-child {
+    font-weight: bold;
+    color: #FFEB3B;
+}
+
+/* --- INSTRUCTION SECTION (Consistent) --- */
+.instruction-guide {
+    max-width: 850px;
+    width: 90%;
+    margin: 40px auto 30px auto; 
+    padding: 30px;
+    background: rgba(255,255,255,0.1); 
+    backdrop-filter: blur(6px);
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    text-align: left;
+    line-height: 1.6;
+}
+.instruction-guide h3 {
+    color: #FFEB3B; 
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+.instruction-guide ul {
+    list-style: none;
+    padding-left: 0;
+}
+.instruction-guide ul li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 20px;
+}
+.instruction-guide ul li::before {
+    content: "🚀"; 
+    position: absolute;
+    left: 0;
+}
+
+/* 📱 Mobile Adjustments */
+@media(max-width:768px){
+  .top-header{
+    padding: 10px 15px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .nav {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+  }
+  .lap-history {
+    display: none;
+  }
+  #stopwatchDisplay {
+    font-size: 3rem;
+  }
+  #stopwatchDisplay span {
+    font-size: 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+  
+<header class="top-header">
+  <div class="logo">PremiClock Pro</div>
+
+  <nav class="nav">
+    <a href="alarm.html">Alarm</a>
+    <a href="timer.html">Timer</a>
+    <a href="stopwatch.html" class="active">Stopwatch</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="time.html">Time</a>
+  </nav>
+</header>
+
+<div class="lap-history">
+  <h3>⏱️ Lap History</h3>
+  <div id="lapListContainer">
+    <ul id="lapList">
+      </ul>
+  </div>
+</div>
+
+<div class="page-center">
+  <div class="container">
+    <h1>Online Stopwatch 🚀</h1>
+    
+    <div id="stopwatchDisplay">00:00:00<span>.00</span></div>
+
+    <button class="btn-start" id="startStopButton" onclick="startStop()">Start</button>
+    <button class="btn-lap" id="lapButton" onclick="recordLap()" disabled>Lap</button>
+    <button class="btn-reset" id="resetButton" onclick="resetStopwatch()">Reset</button>
+
+  </div>
+</div>
+
+<div class="instruction-guide">
+    <h3>How to Use the Online Stopwatch</h3>
+    <p>The PremiClock Pro Stopwatch is perfect for accurately measuring elapsed time in training, science experiments, or competitive events. It includes a Lap feature to track intermediate timings.</p>
+    <ul>
+        <li>**Start/Stop:** Click the **Start** button (pink) to begin timing. The button changes to **Stop** while running. Click it again to pause the measurement.</li>
+        <li>**Lap Recording:** While the stopwatch is running, click the **Lap** button (blue) to record the current time in the **Lap History** section on the right. This lets you track intermediate times without stopping the main clock.</li>
+        <li>**Reset:** Click the **Reset** button (dark purple) to clear all recorded time and lap history, returning the stopwatch to 00:00:00. This button is only active when the stopwatch is stopped.</li>
+        <li>**Precision:** The stopwatch measures time up to hundredths of a second (0.01s) for high accuracy.</li>
+        <li>**Best Practice:** For accurate timing, use a modern browser and ensure the stopwatch tab remains open.</li>
+    </ul>
+</div>
+
+
+<footer class="site-footer">
+  <a href="about.html">About</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms</a>
+  <a href="contact.html">Contact</a>
+</footer>
+
+<div class="copyright">
+  © 2025 PremiClock Pro • Online Stopwatch
+</div>
+
+<script>
+let startTime = 0;
+let elapsedTime = 0;
+let timerInterval;
+let isRunning = false;
+let lapCount = 0;
+
+const display = document.getElementById('stopwatchDisplay');
+const startStopBtn = document.getElementById('startStopButton');
+const lapBtn = document.getElementById('lapButton');
+const resetBtn = document.getElementById('resetButton');
+const lapList = document.getElementById('lapList');
+
+// --- UTILITY FUNCTIONS ---
+
+// Function to format time from milliseconds into HH:MM:SS.ms string
+function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    const msRemainder = Math.floor((ms % 1000) / 10); // Hundredths of a second
+
+    const formattedTime = [h, m, s]
+        .map(v => String(v).padStart(2, '0'))
+        .join(':');
+
+    return `${formattedTime}<span>.${String(msRemainder).padStart(2, '0')}</span>`;
+}
+
+// Function to display the time
+function printTime() {
+    elapsedTime = Date.now() - startTime;
+    display.innerHTML = formatTime(elapsedTime);
+}
+
+// --- MAIN STOPWATCH LOGIC ---
+
+function startStop() {
+    if (!isRunning) {
+        // START/RESUME
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(printTime, 10); // Update every 10ms for hundredths precision
+        
+        startStopBtn.innerText = 'Stop';
+        lapBtn.disabled = false;
+        resetBtn.disabled = true;
+        isRunning = true;
+    } else {
+        // STOP/PAUSE
+        clearInterval(timerInterval);
+        startStopBtn.innerText = 'Start';
+        lapBtn.disabled = true;
+        resetBtn.disabled = false; // Enable reset after stopping
+        isRunning = false;
+    }
+}
+
+function recordLap() {
+    if (!isRunning) return;
+
+    lapCount++;
+    const lapTime = formatTime(elapsedTime);
+
+    const li = document.createElement('li');
+    li.innerHTML = `<span>LAP ${lapCount}:</span> ${lapTime}`;
+    lapList.prepend(li); // Add to the top of the list
+}
+
+function resetStopwatch() {
+    if (isRunning) return; // Cannot reset while running
+
+    clearInterval(timerInterval);
+    elapsedTime = 0;
+    lapCount = 0;
+    
+    display.innerHTML = formatTime(0);
+    lapList.innerHTML = ''; // Clear lap history
+    
+    // Reset buttons to initial state
+    startStopBtn.innerText = 'Start';
+    lapBtn.disabled = true;
+    resetBtn.disabled = true;
+    isRunning = false;
+}
+
+// Initial setup
+resetBtn.disabled = true;
+lapBtn.disabled = true;
+</script>
+</body>
+</html>

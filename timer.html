@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timer — PremiClock Pro</title>
+<style>
+/* --- BASE & LAYOUT STYLES (Consistent with other pages) --- */
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+  color: #fff; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* center content */
+.page-center{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 20px;
+}
+
+/* --- TOP/HEADER & NAV (Consistent) --- */
+.top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  z-index: 9999;
+}
+.logo{
+  font-size:26px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing: 1.5px;
+  border-bottom: 3px solid #ff4081; 
+  padding-bottom: 2px;
+}
+.nav{
+  background:rgba(255,255,255,.18);
+  padding:6px;
+  border-radius:14px;
+  backdrop-filter: blur(10px);
+}
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.nav a:hover,
+.nav a.active {
+  background:rgba(255,255,255,.25);
+}
+
+/* --- FOOTER & COPYRIGHT (Consistent) --- */
+.site-footer{
+  margin: 40px auto 10px;
+  display:flex;
+  gap:18px;
+  padding:10px 22px;
+  border-radius:18px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  z-index: 100; 
+}
+.site-footer a{
+  color:#fff;
+  text-decoration:none;
+  font-size: 13px; 
+}
+.site-footer a:hover{
+  text-decoration:underline;
+}
+.copyright{
+  width:100%;
+  text-align:center;
+  font-size:11px; 
+  opacity:.65;
+  margin-bottom:25px;
+}
+
+/* --- MAIN TIMER CARD STYLES --- */
+.container {
+  background: rgba(255,255,255,0.15);
+  padding: 30px;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  text-align: center;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+h1 { 
+  font-size: 1.8rem; 
+  margin-bottom: 8px; 
+  font-weight: 700;
+}
+
+/* Time Input Group (H:M:S) */
+.time-picker-group {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0 25px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.time-input-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-input-box label {
+  font-size: 0.8rem;
+  color: #4A00E0;
+  opacity: 0.8;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.time-picker-group input {
+  width: 90%;
+  padding: 10px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  background: transparent;
+  -moz-appearance: textfield; /* Remove arrows from Firefox */
+}
+.time-picker-group input::-webkit-outer-spin-button,
+.time-picker-group input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+/* Main Display */
+#timerDisplay {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin: 20px 0;
+  color: #FFEB3B; /* Yellow accent for time */
+}
+
+/* Status Text */
+#status {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.btn-set {
+  background: #FF4081; /* Pink */
+  color: white;
+}
+.btn-set:hover { background: #E73370; }
+
+.btn-stop {
+  background: #03A9F4; /* Blue */
+  color: white;
+}
+.btn-stop:hover { background: #008AC5; }
+
+
+/* --- RIGHT SIDE: RECENTLY USED (Consistent with Alarm page) --- */
+.recent-timers{
+  position: fixed;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 230px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+  color: white;
+}
+.recent-timers h3{
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+}
+#recentList{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#recentList li{
+  background: rgba(255,255,255,0.15);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* --- INSTRUCTION SECTION (Consistent with Alarm page) --- */
+.instruction-guide {
+    max-width: 850px;
+    width: 90%;
+    margin: 40px auto 30px auto; 
+    padding: 30px;
+    background: rgba(255,255,255,0.1); 
+    backdrop-filter: blur(6px);
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    text-align: left;
+    line-height: 1.6;
+}
+.instruction-guide h3 {
+    color: #FFEB3B; 
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+.instruction-guide ul {
+    list-style: none;
+    padding-left: 0;
+}
+.instruction-guide ul li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 20px;
+}
+.instruction-guide ul li::before {
+    content: "⏱️"; 
+    position: absolute;
+    left: 0;
+}
+
+/* 📱 Mobile Adjustments */
+@media(max-width:768px){
+  /* Move navigation to the bottom */
+  .top-header{
+    padding: 10px 15px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .nav {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+  }
+  .recent-timers {
+    display: none;
+  }
+  #timerDisplay {
+    font-size: 3rem;
+  }
+}
+</style>
+</head>
+<body>
+  
+<header class="top-header">
+  <div class="logo">PremiClock Pro</div>
+
+  <nav class="nav">
+    <a href="alarm.html">Alarm</a>
+    <a href="timer.html" class="active">Timer</a>
+    <a href="stopwatch.html">Stopwatch</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="time.html">Time</a>
+  </nav>
+</header>
+
+<div class="recent-timers">
+  <h3>⏳ Recently Used</h3>
+  <ul id="recentList">
+    </ul>
+</div>
+
+<div class="page-center">
+  <div class="container">
+    <h1>Online Timer ⏳</h1>
+    
+    <label style="display:block; text-align:left; margin-bottom: 15px;">Set Time Duration:</label>
+    <div class="time-picker-group">
+      <div class="time-input-box">
+        <input type="number" id="inputHour" min="0" max="99" value="00">
+        <label for="inputHour">Hours</label>
+      </div>
+      <div class="time-input-box">
+        <input type="number" id="inputMinute" min="0" max="59" value="05">
+        <label for="inputMinute">Minutes</label>
+      </div>
+      <div class="time-input-box">
+        <input type="number" id="inputSecond" min="0" max="59" value="00">
+        <label for="inputSecond">Seconds</label>
+      </div>
+    </div>
+
+    <div id="timerDisplay">00:05:00</div>
+
+    <button class="btn-set" id="startButton" onclick="startTimer()">Start Timer</button>
+    <button class="btn-stop" id="stopButton" onclick="stopTimer()" disabled>Stop/Reset</button>
+
+    <div id="status">Ready to set timer.</div>
+
+    <audio id="timerSound" src="https://vclock.com/sound/classic.mp3"></audio>
+  </div>
+</div>
+
+<div class="instruction-guide">
+    <h3>How to Use the Online Timer</h3>
+    <p>The PremiClock Pro Online Timer helps you accurately track specific durations for cooking, study, workouts, or work breaks. Follow these steps to set your countdown:</p>
+    <ul>
+        <li>**Set the Duration:** Use the Hours, Minutes, and Seconds input fields above the display. You must enter a number greater than zero in at least one field.</li>
+        <li>**Start the Countdown:** Click the **Start Timer** button. The main display will begin counting down to zero, and the status bar will update.</li>
+        <li>**Stop or Reset:** If you need to pause or cancel the countdown, click the **Stop/Reset** button. This will pause the countdown if running, or reset it to the initial duration if paused.</li>
+        <li>**Alarm Activation:** When the timer reaches 00:00:00, an audio alarm will sound (using the Classic Tone) to alert you that the time is up.</li>
+        <li>**Recently Used:** Timers you set are automatically added to the "Recently Used" list on the right for quick selection and reuse.</li>
+    </ul>
+</div>
+
+
+<footer class="site-footer">
+  <a href="about.html">About</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms</a>
+  <a href="contact.html">Contact</a>
+</footer>
+
+<div class="copyright">
+  © 2025 PremiClock Pro • Online Timer
+</div>
+
+<script>
+let countdown;
+let timeRemaining = 0;
+let isRunning = false;
+let initialDuration = 0;
+
+const display = document.getElementById('timerDisplay');
+const status = document.getElementById('status');
+const startBtn = document.getElementById('startButton');
+const stopBtn = document.getElementById('stopButton');
+const audio = document.getElementById('timerSound');
+const recentList = document.getElementById('recentList');
+
+const inputHour = document.getElementById('inputHour');
+const inputMinute = document.getElementById('inputMinute');
+const inputSecond = document.getElementById('inputSecond');
+
+// --- UTILITY FUNCTIONS ---
+
+// Function to format seconds into H:M:S string
+function formatTime(totalSeconds) {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+
+    return [h, m, s]
+        .map(v => String(v).padStart(2, '0'))
+        .join(':');
+}
+
+// Function to update the input fields based on the display time (used after reset/stop)
+function updateInputsFromSeconds(totalSeconds) {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    
+    inputHour.value = String(h).padStart(2, '0');
+    inputMinute.value = String(m).padStart(2, '0');
+    inputSecond.value = String(s).padStart(2, '0');
+}
+
+// Function to add a time duration to the recent list
+function addRecentTimer(durationSeconds) {
+    const durationTime = formatTime(durationSeconds);
+    const li = document.createElement("li");
+    li.innerText = durationTime;
+    li.onclick = () => {
+        // Set inputs to the clicked recent duration
+        updateInputsFromSeconds(durationSeconds);
+        // Start the timer immediately
+        startTimer();
+    };
+
+    // Remove duplicates and limit list length
+    Array.from(recentList.children).forEach(child => {
+        if (child.innerText === durationTime) {
+            recentList.removeChild(child);
+        }
+    });
+
+    recentList.prepend(li);
+
+    if(recentList.children.length > 5){
+        recentList.removeChild(recentList.lastChild);
+    }
+}
+
+// --- MAIN TIMER LOGIC ---
+
+function startTimer() {
+    audio.pause();
+    audio.currentTime = 0;
+
+    if (!isRunning) {
+        // First run or after reset: get duration from inputs
+        const hours = parseInt(inputHour.value) || 0;
+        const minutes = parseInt(inputMinute.value) || 0;
+        const seconds = parseInt(inputSecond.value) || 0;
+        
+        const totalDuration = (hours * 3600) + (minutes * 60) + seconds;
+
+        if (totalDuration <= 0) {
+            status.innerText = "Please enter a valid time duration.";
+            return;
+        }
+        
+        timeRemaining = totalDuration;
+        initialDuration = totalDuration; // Save for reset
+        addRecentTimer(initialDuration); // Add to recent list
+        
+        startBtn.innerText = "Pause";
+        stopBtn.disabled = false;
+        isRunning = true;
+        status.innerText = `Timer counting down from ${formatTime(initialDuration)}`;
+    } else {
+        // Currently running: Pause
+        clearInterval(countdown);
+        startBtn.innerText = "Resume";
+        isRunning = false;
+        status.innerText = `Paused at ${formatTime(timeRemaining)}`;
+        return;
+    }
+
+    // Start the countdown interval
+    countdown = setInterval(() => {
+        timeRemaining--;
+        display.innerText = formatTime(timeRemaining);
+
+        if (timeRemaining <= 0) {
+            clearInterval(countdown);
+            display.innerText = "00:00:00";
+            status.innerText = "⏰ Time is up!";
+            audio.play(); // Sound the alarm
+            startBtn.innerText = "Start Timer";
+            isRunning = false;
+            stopBtn.disabled = true;
+            updateInputsFromSeconds(initialDuration); // Reset inputs to initial time
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(countdown);
+    audio.pause();
+    audio.currentTime = 0;
+    
+    // Reset state
+    isRunning = false;
+    timeRemaining = initialDuration; 
+    
+    display.innerText = formatTime(initialDuration);
+    status.innerText = "Timer reset.";
+    startBtn.innerText = "Start Timer";
+    stopBtn.disabled = true;
+
+    updateInputsFromSeconds(initialDuration); // Reset inputs to initial time
+}
+
+// Ensure inputs are numbers and update display on input change
+function setupInputListeners() {
+    [inputHour, inputMinute, inputSecond].forEach(input => {
+        input.addEventListener('input', () => {
+            // Stop/reset if inputs change while paused or before start
+            if (!isRunning) {
+                const h = parseInt(inputHour.value) || 0;
+                const m = parseInt(inputMinute.value) || 0;
+                const s = parseInt(inputSecond.value) || 0;
+                initialDuration = (h * 3600) + (m * 60) + s;
+                display.innerText = formatTime(initialDuration);
+            }
+        });
+    });
+}
+setupInputListeners();
+
+// Initial display setup (5 minutes default)
+updateInputsFromSeconds(300); // 300 seconds = 5 minutes
+initialDuration = 300;
+display.innerText = formatTime(initialDuration);
+</script>
+</body>
+</html>

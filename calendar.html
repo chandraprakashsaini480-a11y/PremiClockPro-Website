@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar — PremiClock Pro</title>
+<style>
+/* --- BASE & LAYOUT STYLES (Consistent) --- */
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  z-index: 9999;
+}
+.logo{
+  font-size:26px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing: 1.5px;
+  border-bottom: 3px solid #ff4081; 
+  padding-bottom: 2px;
+}
+.nav{
+  background:rgba(255,255,255,.18);
+  padding:6px;
+  border-radius:14px;
+}
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.nav a:hover,
+.nav a.active {
+  background:rgba(255,255,255,.25);
+}
+
+.page-center{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 20px;
+}
+
+/* --- CALENDAR SPECIFIC STYLES (PREMIUM LOOK) --- */
+.calendar-container {
+    background: rgba(255,255,255,0.15);
+    padding: 30px;
+    border-radius: 25px; /* Softer edges */
+    backdrop-filter: blur(12px); /* Stronger blur */
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4); /* Deeper shadow */
+    text-align: center;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 0 10px;
+}
+
+.calendar-header h2 {
+    color: #FFEB3B;
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.calendar-header button {
+    background: #03A9F4; /* Secondary accent color */
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.calendar-header button:hover {
+    background: #008AC5;
+    transform: translateY(-1px);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    background: rgba(0,0,0,0.1);
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.day-name {
+    font-weight: 700;
+    padding: 12px 0;
+    color: #ff4081; /* Pink accent for day names */
+    font-size: 0.95rem;
+    text-transform: uppercase;
+}
+
+.day-cell {
+    padding: 15px 0;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-height: 40px; /* Ensure consistent spacing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: default;
+    transition: background 0.2s;
+}
+
+.day-cell.current-month {
+    background: rgba(255,255,255,0.08);
+    cursor: pointer;
+}
+
+.day-cell.current-month:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* Today Highlight */
+.day-cell.today {
+    background: #FF4081; /* Pink highlight */
+    font-weight: bold;
+    color: #000; /* Black text for visibility on pink */
+    box-shadow: 0 0 10px rgba(255, 64, 129, 0.7);
+}
+
+/* Holiday/Event Highlight */
+.day-cell.holiday {
+    background: #FFEB3B; /* Yellow accent for holidays */
+    color: #333; /* Dark text for visibility on yellow */
+    font-weight: 700;
+    border: 2px solid #fff;
+    box-shadow: 0 0 10px rgba(255, 235, 59, 0.9);
+}
+
+/* Days not in current month */
+.day-cell:not(.current-month) {
+    opacity: 0.3;
+}
+
+/* --- FOOTER & COPYRIGHT (Consistent) --- */
+.site-footer{
+  margin: 40px auto 10px;
+  display:flex;
+  gap:18px;
+  padding:10px 22px;
+  border-radius:18px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  z-index: 100; 
+}
+.site-footer a{
+  color:#fff;
+  text-decoration:none;
+  font-size: 13px; 
+}
+.site-footer a:hover{
+  text-decoration:underline;
+}
+.copyright{
+  width:100%;
+  text-align:center;
+  font-size:11px; 
+  opacity:.65;
+  margin-bottom:25px;
+}
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="logo">PremiClock Pro</div>
+  <nav class="nav">
+    <a href="alarm.html">Alarm</a>
+    <a href="timer.html">Timer</a>
+    <a href="stopwatch.html">Stopwatch</a>
+    <a href="calendar.html" class="active">Calendar</a>
+    <a href="time.html">Time</a>
+  </nav>
+</header>
+
+<div class="page-center">
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button onclick="changeMonth(-1)">&#9664; Prev</button>
+            <h2 id="currentMonthYear"></h2>
+            <button onclick="changeMonth(1)">Next &#9654;</button>
+        </div>
+        <div class="calendar-grid">
+            <div class="day-name">Sun</div>
+            <div class="day-name">Mon</div>
+            <div class="day-name">Tue</div>
+            <div class="day-name">Wed</div>
+            <div class="day-name">Thu</div>
+            <div class="day-name">Fri</div>
+            <div class="day-name">Sat</div>
+            <div id="calendarDays" style="grid-column: 1 / 8; display: contents;">
+                </div>
+        </div>
+        <p style="margin-top: 25px; font-size: 0.9rem; opacity: 0.8;">* Today is highlighted in Pink. Holidays are highlighted in Yellow.</p>
+    </div>
+</div>
+
+<footer class="site-footer">
+  <a href="about.html">About</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms</a>
+  <a href="contact.html">Contact</a>
+</footer>
+
+<div class="copyright">
+  © 2025 PremiClock Pro • Online Calendar
+</div>
+
+<script>
+    const calendarDays = document.getElementById('calendarDays');
+    const currentMonthYear = document.getElementById('currentMonthYear');
+    let currentDate = new Date();
+    let currentMonth = currentDate.getMonth();
+    let currentYear = currentDate.getFullYear();
+    const today = new Date();
+
+    // --- Holiday Data (Customize this for your site!) ---
+    // Format: "Month-Day-Year" (e.g., "11-4-2026" for Nov 4, 2026)
+    const holidays = [
+        "11-4-2025", // Sample: November 4, 2025
+        "12-25-2025", // Sample: Christmas Day
+        "1-1-2026", // Sample: New Year's Day
+    ];
+
+    function renderCalendar(month, year) {
+        calendarDays.innerHTML = ''; // Clear previous days
+
+        const firstDayOfMonth = new Date(year, month, 1);
+        const lastDayOfMonth = new Date(year, month + 1, 0);
+        const startingDay = firstDayOfMonth.getDay(); // 0 (Sun) to 6 (Sat)
+        const daysInMonth = lastDayOfMonth.getDate();
+
+        // Update header
+        currentMonthYear.textContent = firstDayOfMonth.toLocaleDateString('en-US', {
+            month: 'long',
+            year: 'numeric'
+        });
+
+        // Add blank cells for the days before the 1st of the month
+        for (let i = 0; i < startingDay; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+            calendarDays.appendChild(cell);
+        }
+
+        // Add day cells
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell current-month';
+            cell.textContent = day;
+
+            const currentDayKey = `${month + 1}-${day}-${year}`;
+
+            // 1. Check if this day is today
+            const isToday = day === today.getDate() && 
+                            month === today.getMonth() && 
+                            year === today.getFullYear();
+
+            // 2. Check if this day is a holiday
+            const isHoliday = holidays.includes(currentDayKey);
+            
+            if (isToday) {
+                cell.classList.add('today');
+            } else if (isHoliday) {
+                cell.classList.add('holiday');
+            }
+
+            calendarDays.appendChild(cell);
+        }
+    }
+
+    // Function to navigate between months
+    function changeMonth(direction) {
+        currentMonth += direction;
+
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+
+        renderCalendar(currentMonth, currentYear);
+    }
+
+    // Initial load
+    renderCalendar(currentMonth, currentYear);
+</script>
+</body>
+</html>

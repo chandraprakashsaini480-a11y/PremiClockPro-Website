@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>World Time — Alarmio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* --- BASE STYLES --- */
+body{
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background: linear-gradient(135deg, #2D008E, #8E2DE2);
+  color:#fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HEADER & NAVIGATION (Consistent Style) --- */
+.top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  z-index: 10;
+}
+
+.logo{
+  font-size:26px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing: 1.5px;
+  border-bottom: 3px solid #ff4081; 
+  padding-bottom: 2px;
+}
+
+.nav{
+  background:rgba(255,255,255,.18);
+  padding:6px;
+  border-radius:14px;
+  backdrop-filter: blur(10px);
+}
+
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.nav a:hover,
+.nav a.active{
+  background:rgba(255,255,255,.25);
+}
+
+
+/* --- MAIN CONTENT GRID --- */
+.content-wrapper {
+  flex: 1;
+  padding: 30px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap:20px;
+}
+
+/* --- CLOCK CARD (Glassmorphism) --- */
+.card{
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(15px);
+  border-radius:20px;
+  padding:20px;
+  text-align:center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-3px);
+    background:rgba(255,255,255,.18);
+}
+
+.card h3{
+  margin:0;
+  font-size:1.1rem;
+  font-weight: 600;
+}
+
+.card .time-display{
+  margin:10px 0 0;
+  font-size:2rem; /* Large time font */
+  font-weight:700;
+}
+
+.card small{
+  display:block;
+  margin-top:6px;
+  font-size:13px;
+  opacity:.8;
+  line-height: 1.4;
+}
+
+/* --- LOCAL TIME SECTION (Big Banner) --- */
+.main-time{
+  text-align:center;
+  margin:20px 0 40px;
+}
+
+.main-time h1{
+  font-size:4rem; /* Super large local time */
+  margin:0;
+  font-weight: 200;
+  letter-spacing: 1px;
+}
+
+.main-time span{
+  font-size:1.2rem;
+  opacity:.9;
+  display: block;
+}
+
+/* --- BIG TIME DISPLAY (Highlighted) --- */
+.big-display{
+    grid-column: 1 / -1; /* Span full width on top of the grid */
+    background: linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,.05));
+    padding: 30px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    text-align: center;
+}
+.big-display #bigCity{
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.big-display #bigTime{
+    font-size: 5rem;
+    font-weight: 200;
+    margin: 0;
+    line-height: 1;
+}
+
+.offset-info {
+    font-size: 1.1rem;
+    margin-top: 15px;
+    opacity: 0.9;
+}
+.offset-info span {
+    font-weight: 700;
+    color: #FFEB3B; /* Yellow accent */
+    margin: 0 5px;
+}
+
+
+/* --- CITY BUTTONS --- */
+.city-list{
+  grid-column: 1 / -1; /* Span full width */
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  padding:16px 0;
+  justify-content:center;
+}
+
+.city-list button{
+  background:rgba(255,255,255,.18);
+  border:1px solid transparent;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:25px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.city-list button:hover{
+  background:rgba(255,255,255,.3);
+}
+
+.city-list button.active{
+  background: #FF4081; /* Pink accent for selected city */
+  border-color: #fff;
+  font-weight: 700;
+  transform: scale(1.05);
+}
+
+
+/* --- FOOTER --- */
+.glass-footer{
+  margin-top: auto; /* Push to bottom */
+  margin-bottom: 20px;
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(12px);
+  border-radius: 30px;
+  padding: 10px 20px;
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  width: fit-content;
+  align-self: center; /* Center the footer */
+  z-index: 10;
+}
+
+.glass-footer a{
+  color: #fff;
+  text-decoration: none;
+  opacity: .9;
+}
+
+.glass-footer a:hover{
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.copyright{
+  text-align:center;
+  font-size:11px;
+  opacity:.65;
+  margin-bottom:25px;
+}
+
+/* Mobile Adjustments */
+@media(max-width:768px){
+    .top-header { padding: 10px 15px; }
+    .nav { 
+      position: fixed;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+    }
+    .main-time h1 { font-size: 3rem; }
+    .big-display #bigTime { font-size: 3.5rem; }
+    .content-wrapper { padding: 15px; }
+    .big-display { margin-bottom: 10px; padding: 20px; }
+    .glass-footer { margin-bottom: 100px; }
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="top-header">
+  <div class="logo">PremiClock Pro</div>
+
+  <nav class="nav">
+    <a href="alarm.html">Alarm</a>
+    <a href="timer.html">Timer</a>
+    <a href="stopwatch.html">Stopwatch</a>
+    <a href="time.html" class="active">Time</a>
+  </nav>
+</header>
+
+<div class="content-wrapper">
+
+  <div class="main-time">
+    <h1 id="localTime">00:00:00 AM</h1>
+    <span>Your Local Time</span>
+  </div>
+
+  <div class="city-list" id="cityList"></div>
+
+  <div class="big-display">
+    <div id="bigCity">Local Time</div>
+    <h1 id="bigTime">00:00:00</h1>
+    <div id="offsetInfo" class="offset-info"></div>
+  </div>
+
+  <div class="grid" id="worldClockGrid">
+    <div class="card">
+        <h3>🇺🇸 New York</h3>
+        <p id="ny" class="time-display"></p>
+        <small id="nyDiff"></small>
+    </div>
+    <div class="card">
+        <h3>🇺🇸 Los Angeles</h3>
+        <p id="la" class="time-display"></p>
+        <small id="laDiff"></small>
+    </div>
+    <div class="card">
+        <h3>🇬🇧 London</h3>
+        <p id="uk" class="time-display"></p>
+        <small id="ukDiff"></small>
+    </div>
+    <div class="card">
+        <h3>🇯🇵 Tokyo</h3>
+        <p id="japan" class="time-display"></p>
+        <small id="japanDiff"></small>
+    </div>
+    
+  </div>
+</div>
+
+
+<script>
+// User's local timezone (for comparison)
+const LOCAL_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+let activeZone = LOCAL_TIMEZONE;
+let activeCityName = "Local Time";
+let activeCityButton = null;
+
+/* =========================
+    TIME UTILITIES
+========================= */
+
+// Formats Date object into HH:MM:SS AM/PM string
+function formatTime(date){
+  let h=date.getHours(),
+      m=date.getMinutes(),
+      s=date.getSeconds(),
+      ap=h>=12?'PM':'AM';
+  h=h%12||12;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} ${ap}`;
+}
+
+// Calculates time difference and day difference relative to local time
+function getOffsetInfo(targetDate, targetZone) {
+    const localDate = new Date();
+    
+    // Get UTC offsets in minutes
+    const localOffset = localDate.getTimezoneOffset();
+    const targetOffset = targetDate.getTimezoneOffset(); // Note: This is client's UTC offset, not target zone's offset
+
+    // Use toLocaleString to get correct UTC offset for the target zone
+    const localTime = new Date(localDate.toLocaleString("en-US", { timeZone: LOCAL_TIMEZONE }));
+    const targetTime = new Date(localDate.toLocaleString("en-US", { timeZone: targetZone }));
+    
+    // Calculate the difference in milliseconds
+    const diffMs = targetTime - localTime;
+    const diffHours = diffMs / (1000 * 60 * 60);
+
+    // Format difference string (e.g., "+5:30", "-10:00")
+    const diffAbsHours = Math.floor(Math.abs(diffHours));
+    const diffMinutes = Math.round((Math.abs(diffHours) - diffAbsHours) * 60);
+    const sign = diffHours >= 0 ? '+' : '-';
+    
+    const offsetStr = `${sign}${String(diffAbsHours).padStart(1, '0')}:${String(diffMinutes).padStart(2, '0')}`;
+
+    // Determine Day difference
+    let dayDiff = "";
+    if (targetTime.getDate() > localTime.getDate()) {
+        dayDiff = " (+1 Day)";
+    } else if (targetTime.getDate() < localTime.getDate()) {
+        dayDiff = " (-1 Day)";
+    }
+
+    return {
+        offsetStr: offsetStr,
+        dayDiff: dayDiff,
+        totalOffsetStr: `UTC ${offsetStr}` // Simplified offset display
+    };
+}
+
+
+/* =========================
+    CLOCK UPDATES
+========================= */
+
+// Updates Local Time and the small grid clocks
+function updateAllClocks(){
+    const now = new Date();
+    document.getElementById("localTime").innerText = formatTime(now);
+
+    function updateCardClock(id, zone, cardDiffId) {
+        // Get the time in the target city's timezone
+        const cityTime = new Date(now.toLocaleString('en-US',{timeZone: zone}));
+        
+        // Update Time
+        document.getElementById(id).innerText = formatTime(cityTime);
+        
+        // Update Offset Info
+        const offsetInfo = getOffsetInfo(cityTime, zone);
+        document.getElementById(cardDiffId).innerHTML = 
+            `Local ${offsetInfo.offsetStr} ${offsetInfo.dayDiff}`;
+    }
+
+    // Update static grid clocks (Timezone IDs are used directly)
+    updateCardClock("ny", "America/New_York", "nyDiff");
+    updateCardClock("la", "America/Los_Angeles", "laDiff");
+    updateCardClock("uk", "Europe/London", "ukDiff");
+    updateCardClock("japan", "Asia/Tokyo", "japanDiff");
+}
+
+// Updates the large selected city clock
+function updateBigClock(){
+    const now = new Date();
+    const targetTime = new Date(now.toLocaleString("en-US", { timeZone: activeZone }));
+    
+    document.getElementById("bigTime").innerText = formatTime(targetTime);
+    
+    const offsetInfo = getOffsetInfo(targetTime, activeZone);
+    document.getElementById("offsetInfo").innerHTML = 
+        `Timezone Offset: <span>${offsetInfo.totalOffsetStr}</span> ${offsetInfo.dayDiff}`;
+}
+
+
+/* =========================
+    CITY BUTTONS LOGIC
+========================= */
+const cities = [
+  ["New York","America/New_York", "🇺🇸"],
+  ["London","Europe/London", "🇬🇧"],
+  ["Dubai","Asia/Dubai", "🇦🇪"],
+  ["Tokyo","Asia/Tokyo", "🇯🇵"],
+  ["Sydney","Australia/Sydney", "🇦🇺"],
+  ["Mexico City","America/Mexico_City", "🇲🇽"],
+  ["Paris","Europe/Paris", "🇫🇷"],
+  ["Shanghai","Asia/Shanghai", "🇨🇳"],
+  ["New Delhi","Asia/Kolkata", "🇮🇳"]
+];
+
+const cityList = document.getElementById("cityList");
+
+function selectCity(name, zone, buttonElement){
+    activeZone = zone;
+    activeCityName = name;
+    
+    document.getElementById("bigCity").innerText = name;
+    
+    // Update button highlighting
+    if(activeCityButton) {
+        activeCityButton.classList.remove('active');
+    }
+    if(buttonElement) {
+        buttonElement.classList.add('active');
+        activeCityButton = buttonElement;
+    } else {
+        // Handle case where local time is the default (no button)
+        activeCityButton = null;
+    }
+    
+    updateBigClock();
+}
+
+// Create City Buttons dynamically
+cities.forEach(([name, zone, flag]) => {
+    const btn = document.createElement("button");
+    btn.innerHTML = `${flag} ${name}`;
+    btn.onclick = () => selectCity(name, zone, btn);
+    cityList.appendChild(btn);
+});
+
+/* =========================
+    START CLOCKS
+========================= */
+setInterval(updateAllClocks,1000);
+setInterval(updateBigClock,1000);
+
+updateAllClocks();
+// Default to the first city or local time
+// Find the New Delhi button and click it to set default big display
+const defaultCityName = "New Delhi"; 
+const defaultCity = cities.find(c => c[0] === defaultCityName);
+
+if (defaultCity) {
+    const defaultButton = Array.from(cityList.children).find(btn => btn.innerText.includes(defaultCityName));
+    selectCity(defaultCity[0], defaultCity[1], defaultButton);
+} else {
+    // Fallback to local time display
+    selectCity("Local Time", LOCAL_TIMEZONE, null);
+}
+
+</script>
+
+<footer class="glass-footer">
+  <a href="about.html">About</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms</a>
+  <a href="contact.html">Contact</a>
+</footer>
+
+<div class="copyright">
+  © 2025 PremiClock Pro • World Time
+</div>
+
+
+</body>
+</html>

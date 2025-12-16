@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Privacy Policy — Alarmio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* --- BASE & LAYOUT STYLES (Consistent with your design) --- */
+body{
+  margin:0;
+  min-height:100vh;
+  background: linear-gradient(135deg, #2D008E, #8E2DE2);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+}
+
+/* Header & Navigation */
+.top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  z-index: 10;
+}
+.logo{
+  font-size:26px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing: 1.5px;
+  border-bottom: 3px solid #ff4081; 
+  padding-bottom: 2px;
+}
+.nav{
+  background:rgba(255,255,255,.18);
+  padding:6px;
+  border-radius:14px;
+  backdrop-filter: blur(10px);
+}
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.nav a:hover,
+.nav a.active{
+  background:rgba(255,255,255,.25);
+}
+
+/* --- CONTENT CARD (Next Level Glassmorphizm) --- */
+.content-card{
+    max-width: 850px;
+    width: 90%;
+    margin: 40px auto;
+    padding: 35px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(18px); 
+    border-radius: 25px; 
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3); 
+    flex: 1; 
+    line-height: 1.7; /* Improved readability */
+}
+
+.content-card h2 {
+    color: #FFEB3B; /* Accent color */
+    margin-top: 0;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+.content-card h3 {
+    margin-top: 30px;
+    color: #03A9F4; /* Secondary accent */
+    font-weight: 700;
+}
+.content-card p, .content-card li {
+    font-size: 1.05rem;
+    margin-bottom: 15px;
+}
+.content-card ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+.content-card ul li:before {
+    content: "🛡️";
+    display: inline-block; 
+    width: 1em;
+    margin-left: -1em;
+}
+
+/* --- FOOTER & COPYRIGHT --- */
+.glass-footer{
+  margin: 40px auto 10px; 
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(12px);
+  border-radius: 30px;
+  padding: 10px 20px;
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  width: fit-content;
+  align-self: center;
+}
+.glass-footer a{
+  color:#fff;
+  text-decoration:none;
+  opacity:.9;
+}
+.copyright{
+  text-align:center;
+  font-size:11px;
+  opacity:.65;
+  margin-bottom:25px;
+}
+@media(max-width:768px){
+    .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); }
+    .content-card { margin-top: 20px; padding: 20px; }
+    .glass-footer { margin-bottom: 100px; }
+}
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="logo">PremiClock Pro</div>
+  <nav class="nav">
+    <a href="alarm.html">Alarm</a>
+    <a href="timer.html">Timer</a>
+    <a href="stopwatch.html">Stopwatch</a>
+    <a href="time.html">Time</a>
+  </nav>
+</header>
+
+<div class="content-card">
+    <h2>🛡️ Privacy Policy</h2>
+    <p>Last Updated: December 16, 2025</p>
+    <p>At Alarmio.com, we prioritize the privacy of our users. This policy details how we handle your information when you use our online services. By using our services, you agree to the provisions of this policy.</p>
+
+    <h3>1. Collection of Personal Information (PII Collection)</h3>
+    <ul>
+        <li>**No PII:** Alarmio.com does not require, ask for, or collect any Personally Identifiable Information (PII) such as your name, email address, or phone number. The use of our service is completely anonymous.</li>
+        <li>**Local Storage:** Your timer settings, alarm preferences, and list of world clock cities are stored exclusively in your browser's Local Storage. This data is never accessed by our servers or any third party and remains solely on your device.</li>
+    </ul>
+
+    <h3>2. Cookies and Third-Party Services</h3>
+    <p>To maintain and improve our service, we utilize third-party tools that may use cookies:</p>
+    <ul>
+        <li>**Google AdSense (Advertising):** We use Google AdSense to display advertisements. Google, as a third-party vendor, uses cookies on your device to serve ads based on your prior visits to Alarmio.com and other sites on the internet.</li>
+        <li>**Google Analytics (Usage Analysis):** We use Google Analytics to understand website performance and general usage (Non-PII). This helps us determine how our service is being used so we can make improvements.</li>
+    </ul>
+    <p>You may opt-out of the use of advertising cookies by visiting the <a href="https://policies.google.com/technologies/ads" style="color: #FFEB3B;">Google ad and content network privacy policy</a>.</p>
+
+    <h3>3. Third-Party Links</h3>
+    <p>Our website may contain links to other external sites. Once you leave our website, we are not responsible for the privacy practices or content of those sites.</p>
+
+    <h3>4. Changes to the Privacy Policy</h3>
+    <p>We reserve the right to modify or update this Privacy Policy at any time. Any changes will be posted on this page and will become effective immediately.</p>
+    
+    <p>If you have any questions regarding this policy, please use the contact details provided on the 'Contact Us' page.</p>
+</div>
+
+<footer class="glass-footer">
+  <a href="about.html">About</a>
+  <a href="privacy.html" class="active">Privacy Policy</a>
+  <a href="terms.html">Terms</a>
+  <a href="contact.html">Contact</a>
+</footer>
+<div class="copyright">© 2025 PremiClock Pro • World Time</div>
+</body>
+</html>

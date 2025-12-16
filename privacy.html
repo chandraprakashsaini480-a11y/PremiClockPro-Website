@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Privacy Policy — PremiClock Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* --- BASE & LAYOUT STYLES (Consistent with your design) --- */
+body{
+  margin:0;
+  min-height:100vh;
+  background: linear-gradient(135deg, #2D008E, #8E2DE2);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+}
+
+/* Header & Navigation (Note: Navigation links need to match your actual files if you use this) */
+.top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  z-index: 10;
+}
+.logo{
+  font-size:26px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing: 1.5px;
+  border-bottom: 3px solid #ff4081; 
+  padding-bottom: 2px;
+}
+.nav{
+  background:rgba(255,255,255,.18);
+  padding:6px;
+  border-radius:14px;
+  backdrop-filter: blur(10px);
+}
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.nav a:hover,
+.nav a.active{
+  background:rgba(255,255,255,.25);
+}
+
+/* --- CONTENT CARD (Next Level Glassmorphizm) --- */
+.content-card{
+    max-width: 850px;
+    width: 90%;
+    margin: 40px auto;
+    padding: 35px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(18px); 
+    border-radius: 25px; 
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3); 
+    flex: 1; 
+    line-height: 1.7; 
+}
+
+.content-card h2 {
+    color: #FFEB3B; 
+    margin-top: 0;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+.content-card h3 {
+    margin-top: 30px;
+    color: #03A9F4; 
+    font-weight: 700;
+}
+.content-card p, .content-card li {
+    font-size: 1.05rem;
+    margin-bottom: 15px;
+}
+.content-card ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+.content-card ul li:before {
+    content: "🛡️";
+    display: inline-block; 
+    width: 1em;
+    margin-left: -1em;
+}
+
+/* --- FOOTER & COPYRIGHT --- */
+.glass-footer{
+  margin: 40px auto 10px; 
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(12px);
+  border-radius: 30px;
+  padding: 10px 20px;
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  width: fit-content;
+  align-self: center;
+}
+.glass-footer a{
+  color:#fff;
+  text-decoration:none;
+  opacity:.9;
+}
+.copyright{
+  text-align:center;
+  font-size:11px;
+  opacity:.65;
+  margin-bottom:25px;
+}
+@media(max-width:768px){
+    .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); }
+    .content-card { margin-top: 20px; padding: 20px; }
+    .glass-footer { margin-bottom: 100px; }
+}
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="logo">PremiClock Pro</div>
+  <nav class="nav">
+    <a href="alarm.html">Alarm</a>
+    <a href="timer.html">Timer</a>
+    <a href="stopwatch.html">Stopwatch</a>
+    <a href="time.html">Time</a>
+  </nav>
+</header>
+
+<div class="content-card">
+    <h2>🛡️ Privacy Policy for PremiClock Pro</h2>
+    <p>Last Updated: December 16, 2025</p>
+    <p>At PremiClock Pro, we are committed to protecting your privacy. This policy outlines how we handle information on our website. By using our services, you agree to the practices described in this Privacy Policy.</p>
+
+    <h3>1. Information Collection and Storage</h3>
+    <ul>
+        <li>**No Personal Data (PII):** We do not require or collect any Personally Identifiable Information (PII) such as names, email addresses, or demographic data. Our service is designed to be completely anonymous.</li>
+        <li>**Local Data Storage:** Any settings you configure for your alarm, timer, or stopwatch are stored locally within your browser's **Local Storage**. This data never leaves your device and is not accessible by us or any third party.</li>
+    </ul>
+
+    <h3>2. Third-Party Advertising (Google AdSense)</h3>
+    <p>We use third-party advertising to keep PremiClock Pro free to use. Google AdSense serves these advertisements:</p>
+    <ul>
+        <li>**Use of Cookies:** Google, as a third-party vendor, uses cookies, including the **DoubleClick DART cookie**, to serve personalized advertisements based on your visits to PremiClock Pro and other websites across the internet.</li>
+        <li>**Opting Out:** Users may opt out of personalized advertising by visiting the <a href="https://adssettings.google.com/authenticated" style="color: #FFEB3B;">Google Ads Settings</a> page. Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting <a href="http://www.aboutads.info/choices/" style="color: #FFEB3B;">www.aboutads.info/choices</a>.</li>
+    </ul>
+
+    <h3>3. General Consent and Agreement</h3>
+    <p>By using our website, you signify your acceptance of this Privacy Policy. If you do not agree to this policy, please do not use our website.</p>
+
+    <h3>4. Contacting Us</h3>
+    <p>If you have any questions regarding this Privacy Policy, please refer to the contact details provided on our dedicated 'Contact Us' page.</p>
+</div>
+
+<footer class="glass-footer">
+  <a href="about.html">About</a>
+  <a href="privacy.html" class="active">Privacy Policy</a>
+  <a href="terms.html">Terms</a>
+  <a href="contact.html">Contact</a>
+</footer>
+<div class="copyright">© 2025 PremiClock Pro • World Time</div>
+</body>
+</html>
