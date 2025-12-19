@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://famous-scone-e0f3db.netlify.app/sitemap.xml
